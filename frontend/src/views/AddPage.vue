@@ -4,6 +4,10 @@
     <p class="subtitle">Set email, location and role.</p>
 
     <form @submit.prevent="submitForm" class="form">
+      <p v-if="phoneError" class="error-message">📵 This phone number has been already registered.</p>
+      <p v-if="emailError" class="error-message">📧 This email has been already registered.</p>
+
+
       <label class="input-label">Info:</label>
 
       <label>Name:</label>
@@ -13,7 +17,7 @@
       <input v-model="form.last_name" required class="input" />
 
       <label>Email:</label>
-      <input v-model="form.email" type="email" required class="input" />
+      <input v-model="form.email" type="email" required :class="['input', emailError ? 'input-error' : '']" />
 
       <label>Phone number:</label>
       <input v-model="form.phone" required class="input" />
@@ -61,7 +65,9 @@ export default {
           value: 'admin',
           label: "Admin - Can delete members"
         }
-      ]
+      ],
+      phoneError: false,
+      emailError: false,
     }
   },
   methods: {
@@ -76,8 +82,24 @@ export default {
           }, 1000)
         })
         .catch(error => {
-          console.error('Error al agregar miembro:', error)
-        })
+            if (
+                error.response &&
+                error.response.data
+            ) {
+                const data = error.response.data
+                this.phoneError = !!data.phone
+                this.emailError = !!data.email
+
+                setTimeout(() => {
+                this.phoneError = false
+                this.emailError = false
+                }, 3000)
+        }
+
+  console.error('Error al agregar miembro:', error)
+})
+
+
     },
     launchConfetti() {
       confetti({
@@ -219,4 +241,16 @@ label {
   font-size: 15px;
   color: #495057;
 }
+
+.error-message {
+  color: #e03131;
+  background: #fff5f5;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 16px;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid #ffa8a8;
+}
+
 </style>
