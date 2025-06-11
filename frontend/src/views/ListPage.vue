@@ -4,52 +4,46 @@
     <p class="subtitle">You have ({{ teamMembers.length }}) team members.</p>
 
     <div v-if="teamMembers.length === 0" class="empty-state">
-        <p class="no-members-text">No team members yet.</p>
-        <router-link to="/add">
-            <button class="big-add-btn">➕ Add a Member</button>
-        </router-link>
-        </div>
-        <div v-else class="add-button">
-        <router-link to="/add">
-            <button class="add-member-btn">+</button>
-        </router-link>
+      <p class="no-members-text">No team members yet.</p>
+      <router-link to="/add">
+        <button class="big-add-btn">➕ Add a Member</button>
+      </router-link>
+    </div>
+    <div v-else class="add-button">
+      <router-link to="/add">
+        <button class="add-member-btn">+</button>
+      </router-link>
     </div>
 
+    <!-- Importación de fuente -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
-    <ul class="card-list">
-        <ul class="card-list">
-        <li
-            v-for="member in teamMembers"
-            :key="member.id"
-            class="card"
-            @click="selectMember(member)"
+    <!-- Card list con 2 columnas si hay más de 2 -->
+    <ul :class="['card-list', { 'two-columns': teamMembers.length > 3 }]">
+      <li
+        v-for="member in teamMembers"
+        :key="member.id"
+        class="card"
+        @click="selectMember(member)"
+      >
+        <img class="avatar" :src="member.avatar || defaultAvatar" alt="Foto del miembro" />
+        <p class="name">{{ member.first_name }} {{ member.last_name }}</p>
+        <p class="role">{{ member.role }}</p>
+        <p class="phone">{{ member.phone || 'No disponible' }}</p>
+        <p class="email">{{ member.email || 'No disponible' }}</p>
+
+        <!-- Bubble de detalles -->
+        <div
+          v-if="selectedMember && selectedMember.id === member.id"
+          class="bubble"
+          @click.stop
         >
-            <!-- Show avatar, name, and role -->
-            <img
-            class="avatar"
-            :src="member.avatar || defaultAvatar"
-            alt="Foto del miembro"
-            />
-
-            <p class="name">{{ member.first_name }} {{ member.last_name }}</p>
-            <p class="role">{{ member.role }}</p>
-
-            <!-- Bubble with email and phone number -->
-            <div
-            v-if="selectedMember && selectedMember.id === member.id"
-            class="bubble"
-            @click.stop
-            >
-            <p><strong>Email:</strong> {{ member.email || 'No disponible' }}</p>
-            <p><strong>Phone number:</strong> {{ member.phone || 'No disponible' }}</p>
-
-            <router-link :to="`/edit/${member.id}`" class="edit-link" @click.stop>
-                ✏️ Edit
-            </router-link>
-            </div>
-        </li>
-        </ul>
-        </ul>
+          <p><strong>Email:</strong> {{ member.email || 'No disponible' }}</p>
+          <p><strong>Phone number:</strong> {{ member.phone || 'No disponible' }}</p>
+          <router-link :to="`/edit/${member.id}`" class="edit-link">✏️ Edit</router-link>
+        </div>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -76,11 +70,8 @@ export default {
   },
   methods: {
     selectMember(member) {
-      this.selectedMember =
-        this.selectedMember && this.selectedMember.id === member.id
-          ? null
-          : member;
-    },
+        this.$router.push(`/edit/${member.id}`);
+    }
   },
 };
 </script>
@@ -94,9 +85,9 @@ body {
 }
 
 .container {
-  max-width: 600px;
+  max-width: 700px;
   margin: 40px auto;
-  padding: 20px;
+  padding: 20px 90px;
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
@@ -141,6 +132,18 @@ body {
   margin: 4px 0 0;
 }
 
+.phone {
+  font-size: 14px;
+  color: #6c757d;
+  margin: 4px 0 0;
+}
+
+.email {
+  font-size: 14px;
+  color: #6c757d;
+  margin: 4px 0 0;
+}
+
 .add-button {
   display: flex;
   justify-content: flex-end;
@@ -166,10 +169,11 @@ body {
   display: inline-block;
   margin-top: 10px;
   font-size: 14px;
-  color: #334bd6;
+  color: #33a0d6;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
+  font-family: 'Inter', sans-serif;
 }
 
 .edit-link:hover {
@@ -222,6 +226,27 @@ body {
   background-color: #357ab8;
   transform: scale(1.05);
 }
+
+.card-list.two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 48px; 
+  row-gap: 24px;     
+  padding: 0 16px;  
+}
+
+
+@media (max-width: 768px) {
+  .card-list.two-columns {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+}
+
+.card {
+  width: 100%;
+}
+
 
 
 </style>
