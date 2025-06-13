@@ -1,5 +1,73 @@
-# Vue 3 + Vite
+# Frontend - Team Members App
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This is the **frontend** for the **Team Members App**, built using **React** and **Vite**. It is a single-page application (SPA) that connects to the Django REST API to manage team members.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+---
+
+## Requirements
+
+- Node.js 18+
+- npm or yarn
+
+---
+
+## Installation
+
+1. Navigate to the frontend directory:
+
+```bash
+cd frontend
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Start the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+The app will run at: `http://localhost:5173`
+
+> Make sure the backend server is running at `http://localhost:8000` so the API can be consumed correctly.
+
+---
+
+## Features
+
+- **List** all team members.
+- **Add** a new member with first name, last name, email, phone, and role.
+- **Edit** existing member information and change their role.
+- **Delete** members from the list.
+- Role-based actions:
+  - `Admin`: can delete members.
+  - `Regular`: cannot delete members.
+
+---
+
+## API Connection
+
+This project uses **Axios / Fetch** to make requests to the backend API hosted at:
+
+```
+http://localhost:8000/api/team-members/
+```
+
+CORS is enabled on the backend to allow communication.
+
+## Testing
+
+No automated tests have been implemented.  
+Future improvements could include unit testing using **Jest** or **React Testing Library**.
+
+---
+
+Ready to use!
