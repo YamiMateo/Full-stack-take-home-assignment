@@ -57,6 +57,7 @@
 
 <script>
 import axios from 'axios'
+import { useToast } from 'vue-toastification'
 
 export default {
   data() {
@@ -77,15 +78,58 @@ export default {
     },
     methods: {
         submitForm() {
+        const toast = useToast();
         const memberId = this.$route.params.id
+
+        if (!/^\d{10}$/.test(this.form.phone)) {
+            toast.warning('Please enter a valid 10-digit phone number', {
+                timeout: 3000,
+                position: 'top-center',
+                hideProgressBar: true,
+            })
+            return
+        }
+
         axios
             .put(`http://localhost:8000/api/team-members/${memberId}/`, this.form)
             .then(() => {
             this.$router.push('/')
             })
             .catch(error => {
+                if (error.response && error.response.data) {
+                    const data = error.response.data
+
+                    const isPhoneDuplicated = !!data.phone
+                    const isEmailDuplicated = !!data.email
+
+                    if (isPhoneDuplicated && isEmailDuplicated) {
+                    toast.warning('This email and phone number already exist.', {
+                        timeout: 3000,
+                        position: 'top-center',
+                        hideProgressBar: true
+                    })
+                    } else if (isPhoneDuplicated) {
+                    toast.warning('This phone number already exists.', {
+                        timeout: 3000,
+                        position: 'top-center',
+                        hideProgressBar: true
+                    })
+                    } else if (isEmailDuplicated) {
+                    toast.warning('This email already exists.', {
+                        timeout: 3000,
+                        position: 'top-center',
+                        hideProgressBar: true
+                    })
+                    }
+
+                } else {
+                    toast.error('An error occurred while updating the member. Please try again.', {
+                    timeout: 3000
+                    })
+                }
+
             console.error('Error updating member:', error)
-            })
+        })
         },
         deleteMember() {
             this.showModal = true;
