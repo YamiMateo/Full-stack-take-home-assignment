@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h2 class="title">Add a team member</h2>
-    <p class="subtitle">Set email, location and role.</p>
+    <p class="subtitle">Set email, phone number and role.</p>
 
     <form @submit.prevent="submitForm" class="form">
 
@@ -136,9 +136,13 @@ export default {
                 }, 3000);
             }
 
-            console.error('An error occurred while adding the member:', error);
+            toast.error('An error occurred while adding the member.\nPlease contact support.', {
+                timeout: 3000,
+                position: 'top-center',
+                hideProgressBar: true
             });
-
+            console.error('Error adding member:', error);
+            });
     },
     launchConfetti() {
       confetti({

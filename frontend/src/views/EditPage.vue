@@ -121,10 +121,11 @@ export default {
                         hideProgressBar: true
                     })
                     }
-
                 } else {
-                    toast.error('An error occurred while updating the member. Please try again.', {
-                    timeout: 3000
+                    toast.error('An error occurred while updating the member.\nPlease contact support.', {
+                        timeout: 3000,
+                        position: 'top-center',
+                        hideProgressBar: true
                     })
                 }
 
