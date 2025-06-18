@@ -47,6 +47,16 @@ The app will run at: `http://localhost:5173`
 - **Add** a new member with first name, last name, email, phone, and role.
 - **Edit** existing member information and change their role.
 - **Delete** members from the list.
+- Server error handling:
+  -  If the API is unreachable, a toast message notifies the user.
+- Validation:
+  -  Prevents submission of malformed phone numbers.
+  -  Detects and warns about duplicated emails, phone numbers or both.
+- Notifications:
+  -  Toast messages for success, warnings, and errors.
+  -  Messages remain visible long enough for users to read them.
+- Navigation:
+  -   Clear call-to-action (CTA) buttons to return to the list from any form screen. 
 - Role-based actions:
   - `Admin`: can delete members.
   - `Regular`: cannot delete members.
