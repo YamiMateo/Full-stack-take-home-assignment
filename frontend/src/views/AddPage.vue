@@ -4,9 +4,6 @@
     <p class="subtitle">Set email, location and role.</p>
 
     <form @submit.prevent="submitForm" class="form">
-      <p v-if="phoneError" class="error-message">📵 This phone number has been already registered.</p>
-      <p v-if="emailError" class="error-message">📧 This email has been already registered.</p>
-
 
       <label class="input-label">Info:</label>
 
@@ -37,6 +34,7 @@
 
       <div class="form-actions">
         <button type="submit" class="submit-btn">Save</button>
+        <button type="button" class="back-btn" @click="$router.push('/')">Back to list</button>
       </div>
     </form>
   </div>
@@ -45,6 +43,8 @@
 <script>
 import axios from 'axios'
 import confetti from 'canvas-confetti'
+import { useToast } from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
 
 export default {
   data() {
@@ -72,33 +72,72 @@ export default {
   },
   methods: {
     submitForm() {
-      axios
-        .post('http://localhost:8000/api/team-members/', this.form)
-        .then(() => {
-          this.launchConfetti()
-          this.successMessage = true
-          setTimeout(() => {
-            this.$router.push('/')
-          }, 1000)
-        })
-        .catch(error => {
-            if (
-                error.response &&
-                error.response.data
-            ) {
-                const data = error.response.data
-                this.phoneError = !!data.phone
-                this.emailError = !!data.email
+        const toast = useToast()
 
-                setTimeout(() => {
-                this.phoneError = false
-                this.emailError = false
-                }, 3000)
+        if (!/^\d{10}$/.test(this.form.phone)) {
+            this.phoneError = "invalid";
+
+            toast.warning('Please enter a valid 10-digit phone number.', {
+                timeout: 3000,
+                position: 'top-center',
+                hideProgressBar: true
+            });
+
+            setTimeout(() => {
+            this.phoneError = false;
+            }, 3000);
+            return;
         }
 
-  console.error('Error al agregar miembro:', error)
-})
+        axios
+            .post('http://localhost:8000/api/team-members/', this.form)
+            .then(() => {
+            this.launchConfetti();
+            toast.success('Member added successfully! 🎉', {
+                timeout: 3000,
+                position: 'top-center',
+                hideProgressBar: true
+            })
+            setTimeout(() => {
+                this.$router.push('/');
+            }, 1000);
+            })
+            .catch(error => {
+            if (error.response && error.response.data) {
+                const data = error.response.data;
+                this.phoneError = data.phone ? "duplicate" : false;
+                this.emailError = !!data.email;
 
+                let message = "";
+
+                switch (true) {
+                case this.phoneError === "duplicate" && this.emailError:
+                    message = 'This phone number and email have already been registered.';
+                    break;
+                case this.phoneError === "duplicate":
+                    message = 'This phone number has already been registered.';
+                    break;
+                case this.emailError:
+                    message = 'This email has already been registered.';
+                    break;
+                }
+
+                if (message) {
+                toast.warning(message, {
+                    timeout: 3000,
+                    position: 'top-center',
+                    hideProgressBar: true
+                });
+                }
+
+                setTimeout(() => {
+                this.phoneError = false;
+                this.emailError = false;
+                }, 3000);
+            }
+
+            console.error('An error occurred while adding the member:', error);
+            });
 
     },
     launchConfetti() {
@@ -113,6 +152,19 @@ export default {
 </script>
 
 <style scoped>
+
+.back-btn {
+  margin-left: 12px;
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 .container {
   max-width: 600px;
   margin: 40px auto;

@@ -36,6 +36,7 @@
       <div class="form-actions dual-buttons">
         <button type="button" @click="deleteMember" class="delete-btn">🗑 Delete</button>
         <button type="submit" class="submit-btn">Save Changes</button>
+        <button type="button" class="back-btn" @click="$router.push('/')">Back to list</button>
       </div>
 
     </form>
@@ -117,6 +118,19 @@ export default {
 </script>
 
 <style scoped>
+
+.back-btn {
+  margin-left: 12px;
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 .container {
   max-width: 600px;
   margin: 40px auto;

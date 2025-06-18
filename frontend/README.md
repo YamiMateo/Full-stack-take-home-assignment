@@ -1,6 +1,6 @@
 # Frontend - Team Members App
 
-This is the **frontend** for the **Team Members App**, built using **React** and **Vite**. It is a single-page application (SPA) that connects to the Django REST API to manage team members.
+This is the **frontend** for the **Team Members App**, built using **Vue 3** and **Vite**. It is a single-page application (SPA) that connects to the Django REST API to manage team members.
 
 ---
 
@@ -66,7 +66,7 @@ CORS is enabled on the backend to allow communication.
 ## Testing
 
 No automated tests have been implemented.  
-Future improvements could include unit testing using **Jest** or **React Testing Library**.
+Future improvements could include unit testing using **Jest** or **Vue 3 Testing Library**.
 
 ---
 

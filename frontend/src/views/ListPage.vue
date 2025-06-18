@@ -9,19 +9,27 @@
         <button class="big-add-btn">➕ Add a Member</button>
       </router-link>
     </div>
-    <div v-else class="add-button">
-      <router-link to="/add">
-        <button class="add-member-btn">+</button>
-      </router-link>
+
+    <div v-if="teamMembers.length > 0" class="list-controls">
+        <div v-if="totalPages > 1" class="pagination">
+            <button
+            v-for="page in totalPages"
+            :key="page"
+            :class="{ active: page === currentPage }"
+            @click="currentPage = page"
+            >
+            {{ page }}
+            </button>
+        </div>
+        <router-link to="/add">
+            <button class="add-member-btn">+</button>
+        </router-link>
     </div>
 
-    <!-- Importación de fuente -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
-
-    <!-- Card list con 2 columnas si hay más de 2 -->
+    <!-- Lista de tarjetas -->
     <ul :class="['card-list', { 'two-columns': teamMembers.length > 3 }]">
       <li
-        v-for="member in teamMembers"
+        v-for="member in paginatedMembers"
         :key="member.id"
         class="card"
         @click="selectMember(member)"
@@ -32,7 +40,6 @@
         <p class="phone">{{ member.phone || 'No disponible' }}</p>
         <p class="email">{{ member.email || 'No disponible' }}</p>
 
-        <!-- Bubble de detalles -->
         <div
           v-if="selectedMember && selectedMember.id === member.id"
           class="bubble"
@@ -47,6 +54,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from 'axios'
 
@@ -55,7 +63,9 @@ export default {
     return {
       teamMembers: [],
       selectedMember: null,
-      defaultAvatar: '/images/avatar.png'
+      defaultAvatar: '/images/avatar.png',
+      currentPage: 1,
+      pageSize: 4,
     }
   },
   created() {
@@ -73,6 +83,16 @@ export default {
         this.$router.push(`/edit/${member.id}`);
     }
   },
+  computed: {
+    paginatedMembers() {
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        return this.teamMembers.slice(start, end);
+    },
+    totalPages() {
+        return Math.ceil(this.teamMembers.length / this.pageSize);
+    }
+  }
 };
 </script>
 
@@ -91,6 +111,7 @@ body {
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+  padding-bottom: 80px;
 }
 
 .title {
@@ -247,6 +268,38 @@ body {
   width: 100%;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  gap: 8px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #dee2e6;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+  background-color: #ced4da;
+}
+
+.pagination button.active {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.list-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 0 4px;
+}
 
 
 </style>
